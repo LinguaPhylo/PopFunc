@@ -78,7 +78,7 @@
                 <version>3.7.1</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/assembly/phylonco-beast-assembly.xml</descriptor>
+                        <descriptor>src/assembly/popfunc-beast-assembly.xml</descriptor>
                     </descriptors>
                     <outputDirectory>${project.build.directory}</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>

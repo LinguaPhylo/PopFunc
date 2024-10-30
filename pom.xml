@@ -32,9 +32,9 @@
     <!-- this already has linguaPhylo, importing again will cause duplication err -->
     <module>../LPhyBeast/</module>
     <module>popfunc-beast</module>
-<!--    <module>popfunc-lphy</module>-->
+    <module>popfunc-lphy</module>
 <!--    <module>popfunc-lphy-studio</module>-->
-<!--    <module>popfunc-lphybeast</module>-->
+    <module>popfunc-lphybeast</module>
   </modules>
 
 </project>

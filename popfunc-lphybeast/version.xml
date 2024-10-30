@@ -1,0 +1,11 @@
+<package name='popfunc.lphybeast' version='0.0.1'>
+    <!-- popfunc lphybeast -->
+    <depends on='popfunc' atleast='1.2.0'/>
+    <depends on='lphybeast' atleast='1.2.1'/>
+
+    <!-- add BEAST2 service below  -->
+    <service type="beast.base.core.BEASTInterface">
+<!-- any ? -->
+    </service>
+
+</package>

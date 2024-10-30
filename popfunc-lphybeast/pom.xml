@@ -1,0 +1,59 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.linguaphylo</groupId>
+        <artifactId>popfunc-root</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>popfunc-lphybeast</artifactId>
+    <!-- popfunc-lphybeast version, it must be consisting with version.xml   -->
+    <version>${revision}</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.linguaphylo</groupId>
+            <artifactId>lphybeast</artifactId>
+            <version>${lphybeast.vision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.linguaphylo</groupId>
+            <artifactId>popfunc-beast</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.linguaphylo</groupId>
+            <artifactId>popfunc-lphy</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/popfunc-lphybeast-assembly.xml</descriptor>
+                    </descriptors>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -22,11 +22,11 @@
             <artifactId>popfunc-beast</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.linguaphylo</groupId>
-            <artifactId>popfunc-lphy</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.github.linguaphylo</groupId>-->
+<!--            <artifactId>popfunc-lphy</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

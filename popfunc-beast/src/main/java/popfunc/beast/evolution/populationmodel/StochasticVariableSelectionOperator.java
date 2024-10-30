@@ -1,4 +1,4 @@
-package popfunc.beast.evolution.populationmodel;//package phylonco.beast.evolution.populationmodel;
+//package popfunc.beast.evolution.populationmodel;//package phylonco.beast.evolution.populationmodel;
 //
 //import beast.base.core.Description;
 //import beast.base.inference.Operator;

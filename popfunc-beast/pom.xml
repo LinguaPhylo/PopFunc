@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>popfunc-beast</artifactId>
-    <!-- phylonco-beast version, it must be consisting with version.xml   -->
+    <!-- popfunc-beast version, it must be consisting with version.xml   -->
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>

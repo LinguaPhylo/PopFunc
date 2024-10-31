@@ -6,13 +6,12 @@
 
     <!-- add BEAST2 service below  -->
     <service type="beast.base.core.BEASTInterface">
-        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_f0"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ExponentialGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.LogisticGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_t50"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ConstantGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.StochasticVariableSelection"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ExpansionGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.GompertzGrowth_f0"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.ExponentialGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.LogisticGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.GompertzGrowth_t50"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.ConstantGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.StochasticVariableSelection"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.ExpansionGrowth"/>
     </service>
-
 </package>

@@ -64,7 +64,7 @@ public class StochasticVariableSelection extends PopulationFunction.Abstract imp
         if (indicator != previousIndicator) {
             previousIndicator = indicator;
             markLikelihoodRecalculation();
-           // logger.info("Model changed, recalculation triggered.");
+            // logger.info("Model changed, recalculation triggered.");
         }
     }
 

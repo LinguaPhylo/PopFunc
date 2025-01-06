@@ -57,7 +57,7 @@ public class LBPhylonco implements LPhyBEASTExt {
 
     @Override
     public Map<SequenceType, DataType> getDataTypeMap() {
-        return Map.of();
+        return new ConcurrentHashMap<>();
     }
 
 

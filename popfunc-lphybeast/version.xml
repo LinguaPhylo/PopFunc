@@ -1,6 +1,6 @@
 <package name='popfunc.lphybeast' version='0.0.1'>
     <!-- popfunc lphybeast -->
-    <depends on='popfunc' atleast='1.2.0'/>
+    <depends on='popfunc' atleast='0.0.1'/>
     <depends on='lphybeast' atleast='1.2.1'/>
 
     <!-- add BEAST2 service below  -->
@@ -8,4 +8,8 @@
 <!-- any ? -->
     </service>
 
+    <!-- add lphybeast ext below  -->
+    <service type="lphybeast.spi.LPhyBEASTExt">
+        <provider classname="popfunc.lphybeast.spi.LBPhylonco"/>
+    </service>
 </package>

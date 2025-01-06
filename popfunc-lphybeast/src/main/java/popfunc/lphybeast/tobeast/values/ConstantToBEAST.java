@@ -9,7 +9,6 @@ import lphybeast.ValueToBEAST;
 import lphybeast.tobeast.values.ValueToParameter;
 import popfunc.beast.evolution.populationmodel.ConstantGrowth;
 
-
 public class ConstantToBEAST implements ValueToBEAST<ConstantPopulation, ConstantGrowth> {
 
     public ConstantGrowth valueToBEAST(Value<ConstantPopulation> lphyPopFuncVal, BEASTContext context) {

@@ -6,6 +6,8 @@
 
 If you use **PopFunc** in your research, please cite:
 
+> **Bayesian model-averaging of parametric coalescent models for phylodynamic inference**  
+> _Yuan Xu, Kylie Chen, Walter Xie, Alexei J. Drummond, et al._
 
 
 

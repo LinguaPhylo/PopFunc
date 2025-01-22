@@ -12,6 +12,7 @@
         <provider classname="popfunc.beast.evolution.populationmodel.GompertzGrowth_t50"/>
         <provider classname="popfunc.beast.evolution.populationmodel.ConstantGrowth"/>
         <provider classname="popfunc.beast.evolution.populationmodel.StochasticVariableSelection"/>
-        <provider classname="popfunc.beast.evolution.populationmodel.ExpansionGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.ExponentialToConstant"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.Cons_Exp_ConsGrowth"/>
     </service>
 </package>

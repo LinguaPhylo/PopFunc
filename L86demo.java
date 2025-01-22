@@ -3,25 +3,30 @@
 import lphy.base.evolution.coalescent.PopulationFunction;
 import lphy.base.evolution.coalescent.populationmodel.*;
 
+
 import java.io.*;
 import java.util.*;
 
-public class BMAdemo {
+public class L86demo {
 
     public static void main(String[] args) {
 
-        String modelType = "SVS";
-
         // Input/Output paths
-        String logFilePath = "/Users/xuyuan/workspace/PopFunc-paper2/real/hcv/beast/hcv.log";
-        String outputCsvPath = "/Users/xuyuan/Desktop/output_results.csv";
+        String logFilePath   = "../L86.log";
+        String outputCsvPath = "../output_results.csv";
 
-        System.out.println("Starting SVSAnalysis...");
+        System.out.println("Starting L86Demographic analysis...");
         System.out.println("Reading file: " + logFilePath);
 
-        // Parameters to be read from the log file
+        // We read these parameters from the log file
+        // (If i=0 => ConstantGrowth needs N0_con, so you might add "N0_con" if not already in your log.)
+        // If i=1 => Exponential => might need b, N_max, NA, I_na
+        // If i=2 => Logistic => might need b, N_max, NA, t50, I_na
+        // If i=3 => GompertzGrowth_f0 => might need b, f0, NA, N0(?), I_na
+        // Make sure these match your log's column names exactly.
         String[] parameterNames = {
                 "I",
+                "N0_con",   // for i=0 => ConstantGrowth
                 "b",
                 "N_max",
                 "NA",
@@ -29,128 +34,111 @@ public class BMAdemo {
                 "f0",
                 "x",
                 "tau",
-                "Tree.height",
+                "psi.height",
                 "I_na"
         };
 
-        // Method for determining max time
+        // Choose how to get maxTime from psi.height
         String treeHeightMethod = "fixed";
 
         // Number of time bins
         int binCount = 100;
 
         try {
-            // 1. Read parameter samples from the log file
+            // 1. Read parameter samples
             Map<String, List<Double>> parameterSamples = readParameterSamples(logFilePath, parameterNames);
             System.out.println("Parameters loaded successfully.");
 
-            // 2. Check Tree.height
-            if (parameterSamples.get("Tree.height") == null || parameterSamples.get("Tree.height").isEmpty()) {
-                throw new IllegalStateException("Error: Tree.height parameter is missing or empty in the log file.");
+            // 2. Check psi.height
+            if (parameterSamples.get("psi.height") == null || parameterSamples.get("psi.height").isEmpty()) {
+                throw new IllegalStateException("Error: psi.height parameter missing or empty.");
             }
 
             // 3. Determine max time
-            List<Double> treeHeightSamples = parameterSamples.get("Tree.height");
+            List<Double> treeHeightSamples = parameterSamples.get("psi.height");
             double maxTime = determineMaxTime(treeHeightMethod, treeHeightSamples);
             System.out.println("Max Time determined: " + maxTime);
 
             // 4. Generate time points
             List<Double> timePoints = generateTimePoints(binCount, 0.0, maxTime);
 
-            // Prepare list for population size samples at each time bin
+            // Prepare data structure for collecting population sizes
             List<List<Double>> populationSizesAtTimePoints = new ArrayList<>();
             for (int i = 0; i < binCount; i++) {
                 populationSizesAtTimePoints.add(new ArrayList<>());
             }
 
-            // 5. Loop over samples: choose the model and evaluate population sizes
+            // 5. Loop over MCMC samples: choose model based on i=0..3
             int sampleCount = parameterSamples.get("I").size();
             for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++) {
-                double I     = parameterSamples.get("I").get(sampleIndex);
-                double b     = getValue(parameterSamples, "b",        sampleIndex);
-                double Nmax  = getValue(parameterSamples, "N_max",    sampleIndex);
-                double NA    = getValue(parameterSamples, "NA",       sampleIndex);
-                double t50   = getValue(parameterSamples, "t50",      sampleIndex);
-                double f0    = getValue(parameterSamples, "f0",       sampleIndex);
-                double x     = getValue(parameterSamples, "x",        sampleIndex);
-                double tau   = getValue(parameterSamples, "tau",      sampleIndex);
-                double I_na  = getValue(parameterSamples, "I_na",     sampleIndex);
+
+                double I     = getValue(parameterSamples, "I",       sampleIndex);
+                double N0Con = getValue(parameterSamples, "N0_con",  sampleIndex);
+                double b     = getValue(parameterSamples, "b",       sampleIndex);
+                double Nmax  = getValue(parameterSamples, "N_max",   sampleIndex);
+                double NA    = getValue(parameterSamples, "NA",      sampleIndex);
+                double t50   = getValue(parameterSamples, "t50",     sampleIndex);
+                double f0    = getValue(parameterSamples, "f0",      sampleIndex);
+                double x     = getValue(parameterSamples, "x",       sampleIndex);
+                double tau   = getValue(parameterSamples, "tau",     sampleIndex);
+                double I_na  = getValue(parameterSamples, "I_na",    sampleIndex);
 
                 PopulationFunction selectedModel;
-                if (I == 0) {
-                    // Exponential
-                    selectedModel = new ExponentialPopulation(
-                            /* GrowthRate = */ b,
-                            /* N0         = */ Nmax,
-                            /* NA         = */ NA,
-                            /* I_na       = */ (int) I_na
-                    );
-                } else if (I == 1) {
-                    // Logistic
-                    selectedModel = new LogisticPopulation(
-                            /* t50               = */ t50,
-                            /* nCarryingCapacity = */ Nmax,
-                            /* b                 = */ b,
-                            /* NA                = */ NA,
-                            /* I_na             = */ (int) I_na
-                    );
-                } else if (I == 2) {
-                    // Gompertz: decide f0 vs. t50
-                    boolean hasF0 = parameterSamples.containsKey("f0")
-                            && sampleIndex < parameterSamples.get("f0").size()
-                            && !Double.isNaN(f0);
 
-                    if (hasF0) {
-                        selectedModel = new GompertzPopulation_f0(
-                                /* N0   = */ Nmax,
-                                /* f0   = */ f0,
-                                /* b    = */ b,
-                                /* NA   = */ NA,
-                                /* I_na = */ (int) I_na
-                        );
-                    } else {
-                        selectedModel = new GompertzPopulation_t50(
-                                /* t50       = */ t50,
-                                /* b         = */ b,
-                                /* NInfinity = */ Nmax,
-                                /* NA        = */ NA,
-                                /* I_na      = */ (int) I_na
-                        );
-                    }
+                // *** The only changes are here: the mapping i=0..3 => 4 different models. ***
+                if (I == 0) {
+                    // i=0 => ConstantGrowth
+                    // e.g. new ConstantGrowth( N0_con )
+                    selectedModel = new ConstantPopulation(N0Con);
+
+                } else if (I == 1) {
+                    // i=1 => ExponentialGrowth
+                    // e.g. new ExponentialGrowth(b, N0=?, NA=?, int I_na=?)
+                    selectedModel = new ExponentialPopulation(
+                            b,
+                            Nmax,        // or whichever param for "N0"
+                            NA,
+                            (int) I_na
+                    );
+
+                } else if (I == 2) {
+                    // i=2 => LogisticGrowth
+                    // e.g. new LogisticGrowth(t50, b, NCarryingCapacity, NA, int I_na)
+                    selectedModel = new LogisticPopulation(
+                            t50,
+                            b,
+                            Nmax,
+                            NA,
+                            (int) I_na
+                    );
+
                 } else if (I == 3) {
-                    // Expansion
-                    selectedModel = new ExpansionPopulation(
-                            /* NA    = */ Nmax,
-                            /* x     = */ NA,
-                            /* r     = */ b,
-                            /* NC    = */ x,
-                            /* I_na  = */ (int) I_na
+                    // i=3 => GompertzGrowth_f0
+                    // e.g. new GompertzGrowth_f0(N0, f0, b, NA, int I_na)
+                    // (If you want to use Nmax as "N0", do so, or if your log has separate "N0" col, use that.)
+                    selectedModel = new GompertzPopulation_f0(
+                            Nmax,   // let's say we treat "N_max" as present-day population
+                            f0,
+                            b,
+                            NA,
+                            (int) I_na
                     );
-                } else if (I == 4) {
-                    // Cons_Exp_Cons
-                    selectedModel = new Cons_Exp_ConsPopulation(
-                            /* tau = */ tau,
-                            /* NC  = */ Nmax,
-                            /* r   = */ b,
-                            /* x   = */ x
-                    );
+
                 } else {
+                    // In case the log has i>3, throw error
                     throw new IllegalArgumentException("Invalid model indicator I: " + I);
                 }
 
-                // Wrap in SVSPopulation or other aggregator
-                SVSPopulation svsPop = new SVSPopulation(selectedModel);
-
-                // Evaluate population size at each time bin
+                // Evaluate population sizes for each time bin
                 for (int iT = 0; iT < binCount; iT++) {
                     double time = timePoints.get(iT);
-                    double popSize = svsPop.getTheta(time);
+                    double popSize = selectedModel.getTheta(time);
                     populationSizesAtTimePoints.get(iT).add(popSize);
                 }
             }
 
-            // 6. Compute statistics (mean, median, 2.5th percentile, 97.5th percentile)
-            List<Double> means = new ArrayList<>();
+            // 6. Compute stats (mean, median, 2.5%, 97.5%)
+            List<Double> means   = new ArrayList<>();
             List<Double> medians = new ArrayList<>();
             List<Double> lower95 = new ArrayList<>();
             List<Double> upper95 = new ArrayList<>();
@@ -169,7 +157,7 @@ public class BMAdemo {
                 upper95.add(upperVal);
             }
 
-            // 7. Write results to CSV
+            // 7. Write CSV
             System.out.println("Writing results to CSV: " + outputCsvPath);
             writeResultsToCSV(outputCsvPath, timePoints, lower95, upper95, means, medians);
 
@@ -181,7 +169,10 @@ public class BMAdemo {
         }
     }
 
-    // Helper method to get a parameter value safely
+    // ------------------------------------------------------------------
+    // The rest of methods remain the same as your original code
+    // ------------------------------------------------------------------
+
     private static double getValue(Map<String, List<Double>> paramSamples, String key, int index) {
         List<Double> list = paramSamples.get(key);
         if (list == null || index >= list.size()) {
@@ -190,7 +181,6 @@ public class BMAdemo {
         return list.get(index);
     }
 
-    // Decide how to determine max time from Tree.height
     public static double determineMaxTime(String method, List<Double> treeHeightSamples) {
         switch (method) {
             case "mean":
@@ -202,13 +192,12 @@ public class BMAdemo {
             case "upperHPD":
                 return calculateHPD(treeHeightSamples, 0.95)[1];
             case "fixed":
-                return 150.0;
+                return 0.11;
             default:
                 throw new IllegalArgumentException("Unknown treeHeightMethod: " + method);
         }
     }
 
-    // Generate a list of time points
     public static List<Double> generateTimePoints(int numPoints, double minTime, double maxTime) {
         List<Double> timePoints = new ArrayList<>();
         double deltaTime = (maxTime - minTime) / (numPoints - 1);
@@ -218,7 +207,6 @@ public class BMAdemo {
         return timePoints;
     }
 
-    // Read parameter samples from file
     public static Map<String, List<Double>> readParameterSamples(String filePath, String[] parameterNames) {
         Map<String, List<Double>> samples = new HashMap<>();
         for (String param : parameterNames) {
@@ -253,18 +241,16 @@ public class BMAdemo {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading the file: " + filePath);
+            System.err.println("Error reading file: " + filePath);
             e.printStackTrace();
         }
         return samples;
     }
 
-    // Calculate mean
     public static double calculateMean(List<Double> values) {
         return values.stream().mapToDouble(Double::doubleValue).average().orElse(Double.NaN);
     }
 
-    // Calculate median
     public static double calculateMedian(List<Double> values) {
         List<Double> sorted = new ArrayList<>(values);
         Collections.sort(sorted);
@@ -273,13 +259,12 @@ public class BMAdemo {
             return Double.NaN;
         }
         if (n % 2 == 0) {
-            return (sorted.get(n / 2 - 1) + sorted.get(n / 2)) / 2.0;
+            return (sorted.get(n/2 - 1) + sorted.get(n/2)) / 2.0;
         } else {
-            return sorted.get(n / 2);
+            return sorted.get(n/2);
         }
     }
 
-    // Calculate a given percentile (e.g., 2.5 or 97.5)
     public static double calculatePercentile(List<Double> values, double percentile) {
         if (values.isEmpty()) {
             return Double.NaN;
@@ -287,10 +272,9 @@ public class BMAdemo {
         List<Double> sorted = new ArrayList<>(values);
         Collections.sort(sorted);
         int index = (int) Math.ceil(percentile / 100.0 * sorted.size()) - 1;
-        return sorted.get(Math.max(0, Math.min(index, sorted.size() - 1)));
+        return sorted.get(Math.max(0, Math.min(index, sorted.size()-1)));
     }
 
-    // Calculate HPD interval
     public static double[] calculateHPD(List<Double> values, double credMass) {
         if (values.isEmpty()) {
             return new double[]{Double.NaN, Double.NaN};
@@ -315,7 +299,6 @@ public class BMAdemo {
         };
     }
 
-    // Write results to CSV
     public static void writeResultsToCSV(String filePath,
                                          List<Double> timePoints,
                                          List<Double> lower95,
@@ -325,14 +308,12 @@ public class BMAdemo {
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath))) {
             pw.println("Time,Lower95,Upper95,Mean,Median");
             for (int i = 0; i < timePoints.size(); i++) {
-                pw.printf(
-                        "%f,%f,%f,%f,%f%n",
+                pw.printf("%f,%f,%f,%f,%f%n",
                         timePoints.get(i),
                         lower95.get(i),
                         upper95.get(i),
                         means.get(i),
-                        medians.get(i)
-                );
+                        medians.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();

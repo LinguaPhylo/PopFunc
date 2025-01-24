@@ -14,5 +14,6 @@
         <provider classname="popfunc.beast.evolution.populationmodel.StochasticVariableSelection"/>
         <provider classname="popfunc.beast.evolution.populationmodel.ExponentialToConstant"/>
         <provider classname="popfunc.beast.evolution.populationmodel.Cons_Exp_ConsGrowth"/>
+        <provider classname="popfunc.beast.evolution.populationmodel.ExpansionGrowth"/>
     </service>
 </package>

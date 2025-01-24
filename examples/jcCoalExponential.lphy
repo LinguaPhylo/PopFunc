@@ -1,8 +1,8 @@
 
 model {
 GrowthRate ~ LogNormal(meanlog=2.0, sdlog=0.9);
-N0 ~ LogNormal(meanlog=9.2, sdlog=0.12);
-NA ~ LogNormal(meanlog=5.2, sdlog=0.12);
+N0 ~ LogNormal(meanlog=6.2, sdlog=0.5);
+NA ~ LogNormal(meanlog=5.2, sdlog=0.5);
 I_na ~ UniformDiscrete(lower=0, upper=1);
 exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0, NA=NA, I_na=I_na);
 tree ~ CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);

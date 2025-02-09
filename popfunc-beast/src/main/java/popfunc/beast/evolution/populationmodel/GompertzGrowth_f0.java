@@ -1,7 +1,11 @@
 package popfunc.beast.evolution.populationmodel;
 
 import beast.base.core.*;
+import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
+import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
+import beast.base.inference.operator.UpDownOperator;
+import beast.base.inference.operator.kernel.Transform;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -20,7 +24,7 @@ import java.util.List;
  * If I_na=1 and NA>0, the model uses a baseline ancestral population size in the Gompertz formula.
  */
 @Description("Coalescent intervals for a Gompertz growing population with an optional ancestral size NA.")
-public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Loggable {
+public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Loggable,PopFuncWithUpDownOp,PopFuncWithAVMNOp {
 
     /**
      * Initial proportion of the carrying capacity.
@@ -279,4 +283,66 @@ public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Lo
     public void close(PrintStream printStream) {
         printStream.println("# End of log");
     }
+
+    @Override
+    public UpDownOperator getUpDownOperator1(Tree tree) {
+        UpDownOperator upDownOperator = new UpDownOperator();
+        String idStr = getID() + "Up" + tree.getID() + "DownOperator1";
+        upDownOperator.setID(idStr);
+        upDownOperator.setInputValue("scaleFactor", 0.75);
+        upDownOperator.setInputValue("weight", 3.0);
+        upDownOperator.setInputValue("up", f0Input.get());
+        upDownOperator.setInputValue("down", tree);
+        upDownOperator.initAndValidate();
+        return upDownOperator;
+    }
+    @Override
+    public UpDownOperator getUpDownOperator2(Tree tree) {
+        UpDownOperator upDownOperator = new UpDownOperator();
+        String idStr = getID() + "Up" + tree.getID() + "DownOperator2";
+        upDownOperator.setID(idStr);
+        upDownOperator.setInputValue("scaleFactor", 0.75);
+        upDownOperator.setInputValue("weight", 3.0);
+        upDownOperator.setInputValue("up", bInput.get());
+        upDownOperator.setInputValue("down", tree);
+        upDownOperator.initAndValidate();
+        return upDownOperator;
+    }
+
+    @Override
+    public AdaptableVarianceMultivariateNormalOperator getAVMNOperator(Tree tree) {
+
+        AdaptableVarianceMultivariateNormalOperator avmnOp = new AdaptableVarianceMultivariateNormalOperator();
+        String opID = getID() + "AVMNOperator";
+        avmnOp.setID(opID);
+
+        avmnOp.setInputValue("beta", 0.05);
+        avmnOp.setInputValue("burnin", 400);
+        avmnOp.setInputValue("initial", 800);
+        avmnOp.setInputValue("weight", 2.0);
+
+        Transform.LogitTransform f0Transform = new Transform.LogitTransform();
+        f0Transform.setID("f0Transform");
+        f0Transform.setInputValue("f", f0Input.get());
+
+        f0Transform.initAndValidate();
+
+        Transform.LogTransform bTransform = new Transform.LogTransform();
+        bTransform.setID("bTransform");
+        bTransform.setInputValue("f", bInput.get());
+
+        bTransform.initAndValidate();
+
+        List<Transform> transforms = new ArrayList<>();
+        transforms.add(f0Transform);
+        transforms.add(bTransform);
+
+        avmnOp.setInputValue("transformations", transforms);
+
+        avmnOp.initAndValidate();
+
+        return avmnOp;
+    }
+
 }
+

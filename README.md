@@ -106,17 +106,13 @@ Below are minimal examples illustrating:
 ```
 ### AVMN operator for correlated proposals
 ```xml
-<operator id="AVMNOperator" spec="kernel.AdaptableVarianceMultivariateNormalOperator"
-          beta="0.05" burnin="400" initial="800" weight="2">
-    <!-- Interval transform if f0 in [0,1] -->
-    <transformations id="f0Transform" spec="operator.kernel.Transform$Interval"
-                     lower="0.0" upper="1.0">
-        <f idref="f0"/>
-    </transformations>
-    <!-- Log transform if b > 0 -->
-    <transformations id="bTransform" spec="operator.kernel.Transform$LogTransform">
-        <f idref="b"/>
-    </transformations>
+<operator id="AVMNOperator" spec="kernel.AdaptableVarianceMultivariateNormalOperator" beta="0.05" burnin="400" initial="800" weight="2">
+  <transformations id="f0Transform" spec="operator.kernel.Transform$LogitTransform">
+    <f idref="f0"/>
+  </transformations>
+  <transformations id="bTransform" spec="operator.kernel.Transform$LogTransform">
+    <f idref="b"/>
+  </transformations>
 </operator>
 
 
@@ -128,8 +124,6 @@ Below are minimal examples illustrating:
   - If your tree is named `psi` (instead of `tree`), change `<down idref="tree"/>` to `<down idref="psi"/>`.  
   - Rename operator IDs to something more descriptive (e.g., `"upDown_f0_tree"` or `"upDown_f0_b_tree"`).
 
-- **Parameter transforms**  
-  - Use `Interval` for parameters constrained between 0 and 1, and `LogTransform` for strictly positive parameters.
 
 - **Tune `weight`, `scaleFactor`, etc.**  
   - Adjust these to balance acceptance rates and sampling efficiency.  

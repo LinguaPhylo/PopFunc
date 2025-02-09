@@ -6,9 +6,6 @@ import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.base.evolution.coalescent.populationmodel.*;
 import lphy.base.evolution.tree.*;
-import lphy.base.function.Difference;
-import lphy.base.function.Union;
-import lphy.base.function.io.ReadTrees;
 import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
@@ -29,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * to extend.
  * @author Walter Xie
  */
-public class LBPhylonco implements LPhyBEASTExt {
+public class LBPopfunc implements LPhyBEASTExt {
 
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {

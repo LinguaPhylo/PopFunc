@@ -2,15 +2,14 @@ data {
   L = 1000;
 }
 model {
-  t50 ~ LogNormal(meanlog=-2.2, sdlog=0.64);
-  b ~ LogNormal(meanlog=1, sdlog=0.5);
-  NInfinity ~ LogNormal(meanlog=6, sdlog=0.5);
-  NA ~ LogNormal(meanlog=2, sdlog=0.5);
-  I_na ~ UniformDiscrete(lower=0, upper=1);
-
-  gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b, NA=NA,I_na = I_na);
-  tree ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
-  D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor(), mu=1e-2);
-  height = tree.rootAge();
-  length = tree.treeLength();
+t50 ~ LogNormal(meanlog=-2.2, sdlog=0.64);
+b ~ LogNormal(meanlog=1, sdlog=0.5);
+NInfinity ~ LogNormal(meanlog=6, sdlog=0.5);
+NA ~ LogNormal(meanlog=2, sdlog=0.5);
+I_na ~ UniformDiscrete(lower=0, upper=1);
+gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b, NA=NA,I_na = I_na);
+tree ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
+D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor(), mu=1e-2);
+height = tree.rootAge();
+length = tree.treeLength();
 }

@@ -10,6 +10,6 @@
 
     <!-- add lphybeast ext below  -->
     <service type="lphybeast.spi.LPhyBEASTExt">
-        <provider classname="popfunc.lphybeast.spi.LBPhylonco"/>
+        <provider classname="popfunc.lphybeast.spi.LBPopfunc"/>
     </service>
 </package>

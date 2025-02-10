@@ -64,9 +64,26 @@ You can configure the relevant parameters in either the BEAUti interface or by e
 For more information on Metropolis-coupled MCMC (MC\(^3\)), please refer to the [BEAST2 Metropolis-coupled MCMC](https://www.beast2.org/2020/01/14/metropolis-coupled-mcmcmc3-works.html).
 
 
-## Example Operators for Logistic/Gompertz Models
+## How to set up BEAST2 analysis to run with coupled MCMC
 
+Make sure the CoupledMCMC package is [installed](https://www.beast2.org/managing-packages/).
+
+### By editing an XML file in a text editor
+In order to  set up a pre-prepared xml to run with coupled MCMC, open the `*.xml` and change the MCMC line in the xml.
+
+To do so, go to the line with:
+
+```xml
+<run id="mcmc" spec="MCMC" chainLength="....." numInitializationAttempts="....">
+```
+To have a run with coupled MCMC, we have to replace that one line with:
+
+```xml
+ <run id="mcmcmc" spec="coupledMCMC.CoupledMCMC" chainLength="20000000" chains="4" deltaTemperature="0.15" resampleEvery="1000" target="0.234">
+```
+## Example Operators for Logistic/Gompertz Models
 When inferring **logistic** or **Gompertz** population growth, adding specialized MCMC operators often improves sampling efficiency—particularly if parameters (e.g., `f0`, `b`, and tree height) are strongly correlated.
+
 
 Below are minimal examples illustrating:
 
@@ -85,7 +102,6 @@ Below are minimal examples illustrating:
     <up idref="f0"/>
     <down idref="tree"/>
 </operator>
-
 <!-- Another Up-Down operator for b and the tree -->
 <operator id="gompertzUpDown_b" spec="operator.UpDownOperator"
           scaleFactor="0.75" weight="3.0">
@@ -114,7 +130,6 @@ Below are minimal examples illustrating:
     <f idref="b"/>
   </transformations>
 </operator>
-
 
 ```
 

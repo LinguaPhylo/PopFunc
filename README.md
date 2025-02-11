@@ -150,9 +150,6 @@ Below are minimal examples illustrating:
 - For advanced tips (e.g., example for AVMN operator), see [AVMN operators](https://www.beast2.org/2023/01/04/beast-2.6-vs-2.7-performance-benchmarking.html).
 
 
-## Setting up Operators with LPhyBEAST
-
----
 
 ## LPhyBEAST Installation Guide
 

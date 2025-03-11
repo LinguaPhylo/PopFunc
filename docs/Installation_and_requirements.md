@@ -25,3 +25,9 @@ We also recommend installing:
 In your BEAST2 installation directory (e.g., `~/beast/bin` on Linux/Mac), run:
 ```bash
 ./packagemanager -add PopFunc
+```
+Afterwards, confirm PopFunc is listed by running:
+
+```bash
+./packagemanager -list
+```

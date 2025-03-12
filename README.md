@@ -20,7 +20,7 @@ PopFunc is a **BEAST2** package that enables Bayesian inference of parametric po
 6. [Examples & Tutorials](./docs/Examples_and_Tutorials.md)  
    - Step-by-step demonstrations, scripts, and recommended workflows for applying PopFunc to real or simulated data.
 
-7. [References](./references.md)  
+7. [References](./docs/references.md)  
    - Cited works, recommended reading, and relevant publications for further study.
 
 If you have any questions or need further help, feel free to check out the [BEAST Users Google Group](https://groups.google.com/g/beast-users).

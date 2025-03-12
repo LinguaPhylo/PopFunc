@@ -31,4 +31,4 @@ In evolutionary biology, epidemiology, and cancer genomics, **coalescent-based p
 - **Population Genetics**  
   Comparing multiple growth hypotheses (constant, logistic, etc.) in a single unified Bayesian framework.
 
-For more details on how these models are parameterized and applied, refer to our accompanying paper and the [Usage & BMA Setup Guide](docs/Bayesian_Model_Averaging_Setup.md).
+For more details on how these models are parameterized and applied, refer to our accompanying paper and the [Usage & BMA Setup Guide](https://github.com/LinguaPhylo/PopFunc/blob/main/docs/Bayesian_Model_Averaging_Setup.md).

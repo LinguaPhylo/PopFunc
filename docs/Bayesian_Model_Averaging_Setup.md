@@ -106,6 +106,6 @@ LPhyBEAST (and its extensions) are a set of add-on packages for BEAST 2, requiri
 
 ### 2. Install LPhy
 
-> **Note**: The `lphybeast` package does **not** include LPhy. You need to install [LPhy Studio](https://github.com/lphy-release/LPhyStudio/releases) separately if not already installed.
+> **Note**: The `lphybeast` package does **not** include LPhy. You need to install [LPhy Studio](https://github.com/LinguaPhylo/linguaPhylo/releases) separately if not already installed.
 
 - Download and install **LPhy Studio** to the default path to ensure compatibility.
